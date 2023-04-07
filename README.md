@@ -1,2 +1,2 @@
 # JOGO DA VELHA
- Meu primeiro projetinho em python 3.
+ Meu primeiro projeto em python 3.
