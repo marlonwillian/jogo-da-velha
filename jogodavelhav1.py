@@ -30,6 +30,7 @@ else:
         s = jogador2
 print('-' * 30)
 
+    # X ou O #
 if jogador1 == 'X':
     jogador2 = 'O'
     print(f'O {sorteado} escolheu o {jogador1}, o Jogador 2 é o O.')
