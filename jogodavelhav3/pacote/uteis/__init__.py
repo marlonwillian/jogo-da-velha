@@ -1,9 +1,8 @@
 from random import randint
-from pacote.dado import leiaInt
 from tkinter import *
 
-def fechar(janela):
-    janela.after(3000, lambda:janela.destroy())
+def fechar(janela, tempo):
+    janela.after(tempo, lambda:janela.destroy())
 
 def tela_sorteio():
     global janela_sorteio
@@ -29,7 +28,7 @@ def tela_sorteio():
     espaco = Label(janela_sorteio, text='')
     espaco.grid(column = 0, row = 8)
 
-    botao = Button(janela_sorteio, text='Sortear', command=lambda: [sorteio(), fechar(janela_sorteio)])
+    botao = Button(janela_sorteio, text='Sortear', command=lambda: [sorteio(), fechar(janela_sorteio, 1500)])
     botao.grid(column = 0, row = 9)
 
     global texto_sorteado
@@ -47,17 +46,15 @@ def sorteio():
         sorteado = jogador1.get()
         nsorteado = jogador2.get()
         texto_sorteado['text'] = f'{sorteado} joga primeiro!'
-        return sorteado, nsorteado
     else:
         if j2 == sorteio:
             sorteado = jogador2.get()
             nsorteado = jogador1.get()
             texto_sorteado['text'] = f'{sorteado} joga primeiro!'
-            return sorteado, nsorteado
-
+            
 def tela_definidor():
         global janela_definidor, escolha, aviso1, aviso2
-
+    
         janela_definidor = Tk()
         janela_definidor.title('Jogo da velha')
         janela_definidor.geometry('225x180')
@@ -68,7 +65,7 @@ def tela_definidor():
         escolha = Entry(janela_definidor)
         escolha.grid(column=0, row=2)
         
-        botao = Button(janela_definidor, text='Pronto', command=lambda: [definidor(), fechar(janela_definidor)])
+        botao = Button(janela_definidor, text='Pronto', command=lambda: [definidor(), fechar(janela_definidor, 2000)])
         botao.grid(column = 0, row = 3)
 
         aviso1 = Label(janela_definidor, text='')
@@ -80,153 +77,182 @@ def tela_definidor():
         janela_definidor.mainloop()
 
 def definidor():
+    global jogador1, jogador2
     if escolha.get() == 'X' or escolha.get() == 'x':
         jogador1 = 'X'
         jogador2 = 'O'
         aviso1['text'] = f'{sorteado} jogará com o {jogador1}.'
         aviso2['text'] = f'{nsorteado} jogará com o {jogador2}.'
-        if jogador1 == 'X':
-            X = jogador1
-            O = jogador2 
-        return X, O
     elif escolha == 'O':
         jogador1 = 'O'
         jogador2 = 'X'
         aviso1['text'] = f'{sorteado} jogará com o {jogador1}.'
         aviso2['text'] = f'{nsorteado} jogará com o {jogador2}.'
-        if jogador1 == 'O':
-            O = jogador1
-            X = jogador2
-        return O, X
 
-def geraTabela(letra1, letra2):
-    print('-' * 50)
-    global casas
-    casas = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+def tela_tabela():
+    cor_fundo = 'black'
+    cor_linha = 'white'
+
+    global janela_tabela
+    
+    janela_tabela = Tk()
+    janela_tabela.title('Jogo da Velha')
+    janela_tabela.geometry('235x330')
+
+    # frames #
+
+    frame_topo = Frame(janela_tabela, width=235, height=100, bg=cor_fundo)
+    frame_topo.grid(row=0, column=0)
+
+    frame_meio = Frame(janela_tabela, width=235, height=100, bg=cor_fundo)
+    frame_meio.grid(row=2, column=0)
+
+    frame_baixo = Frame(janela_tabela, width=235, height=100, bg=cor_fundo)
+    frame_baixo.grid(row=4, column=0)
+
+    global c, contador
+    c = 0
     contador = 0
-    jogadas = 0 
-    verificador = False
-    while verificador != True:
-        print('\n')
-        for c in range(1, 10):
-            if c == 1 or c == 4 or c == 7:
-                print(f'|{casas[c]}|'.rjust(23), end='')
-            else:
-                print(f'|{casas[c]}|', end='')
-            if c == 3 or c == 6:
-                print(end='\n')
-            if c == 9:
-                if contador % 2 == 0: 
-                    print('\n')
-                    casa = leiaInt(f'É a vez de {sorteado}, você quer jogar em qual posição? ')
-                    if casas[casa] == letra1 or casas[casa] == letra2:
-                        print('\n')
-                        mostraTabela(sorteado, False)
-                        print('\n')
-                        casa = leiaInt(f'Erro! {sorteado} escolha uma casa vazia: ')
-                        casas[casa] = letra1
-                    else:
-                        casas[casa] = letra1
-                    verificador = verificaGanhador(sorteado, letra1)
-                    contador += 1
-                else:
-                    if contador % 2 != 0:
-                        print('\n')
-                        casa = leiaInt(f'É a vez de {nsorteado}, você quer jogar em qual posição? ')
-                        if casas[casa] == letra1 or casas[casa] == letra2:
-                            print('\n')
-                            mostraTabela(nsorteado, False)
-                            print('\n')
-                            casa = leiaInt(f'Erro! {nsorteado} escolha uma casa vazia: ')
-                            casas[casa] = letra2
-                        else:
-                            casas[casa] = letra2
-                        verificador = verificaGanhador(nsorteado, letra2)
-                        contador +=1
-                jogadas +=1
-            if jogadas == 9:
-                print('-' * 50)
-                print('Deu velha!'.center(50))
-                print('-' * 50)
-                verificador = True
 
-def verificaGanhador(jogador, letra):
-    colunas = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-    contadorl = 0
+    while True:
+
+        # botões topo #
+
+        global b1, b2, b3, b4, b5, b6, b7, b8, b9
+
+        b1 = Button(frame_topo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b1), verificaGanhador()])
+        b1.place(x=0, y=0)
+
+        b2 = Button(frame_topo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b2), verificaGanhador()])
+        b2.place(x=80, y=0)
+
+        b3 = Button(frame_topo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b3), verificaGanhador()])
+        b3.place(x=160, y=0)
+
+        # botões meio #
+
+        b4 = Button(frame_meio, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b4), verificaGanhador()])
+        b4.place(x=0, y=1)
+
+        b5 = Button(frame_meio, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b5), verificaGanhador()])
+        b5.place(x=80, y=1)
+
+        b6 = Button(frame_meio, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b6), verificaGanhador()])
+        b6.place(x=160, y=1)
+
+        # botões de baixo #
+
+        b7 = Button(frame_baixo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b7), verificaGanhador()])
+        b7.place(x=0, y=1)
+
+        b8 = Button(frame_baixo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b8), verificaGanhador()])
+        b8.place(x=80, y=1)
+
+        b9 = Button(frame_baixo, text='', width=10, height=8, bg=cor_linha, command=lambda: [marcador(b9), verificaGanhador()])
+        b9.place(x=160, y=1)
+
+        global aviso
+        aviso = Label(janela_tabela, text=f'Vez de {sorteado} jogar! |{jogador1}|')
+        aviso.grid(row=5, column=0)
+
+        janela_tabela.mainloop()
+        
+        break
+
+def marcador(nbotao):
+    global c, contador, vencedor, verifica
+    verifica = False
+    if c % 2 == 0 and nbotao['text'] == '':
+        nbotao['text'] = jogador1
+        aviso['text'] = f'Vez de {nsorteado} jogar! |{jogador2}|'
+        vencedor = sorteado
+        c += 1
+        contador += 1
+        if contador == 9:
+            aviso['text'] = f'Deu velha!'
+            fechar(janela_tabela, 2000)
+    elif c % 2 != 0 and nbotao['text'] == '':
+        nbotao['text'] = jogador2
+        aviso['text'] = f'Vez de {sorteado} jogar! |{jogador1}|'
+        vencedor = nsorteado
+        c += 1
+        contador += 1
+        if contador == 9:
+            aviso['text'] = f'Deu velha!'
+            fechar(janela_tabela, 2000)
+    elif nbotao['text'] != '': 
+            aviso['text'] = 'Marque em lugar vazio!'
+
+def verificaGanhador():
     # Horizontal #
-    for c in range(0, 3):
-        if casas[colunas[0][c]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    contadorl = 0
-    for c in range(0, 3):
-        if casas[colunas[1][c]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    contadorl = 0
-    for c in range(0, 3):
-        if casas[colunas[2][c]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
+
+    if b1['text'] == 'X' and b2['text'] == 'X' and b3['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b1['text'] == 'O' and b2['text'] == 'O' and b3['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b4['text'] == 'X' and b5['text'] == 'X' and b6['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b4['text'] == 'O' and b5['text'] == 'O' and b6['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b7['text'] == 'X' and b8['text'] == 'X' and b9['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b7['text'] == 'O' and b8['text'] == 'O' and b9['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+
     # Vertical #
-    contadorl = 0
-    for c in range(0, 3):
-        if casas[colunas[c][0]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    contadorl = 0   
-    for c in range(0, 3):
-        if casas[colunas[c][1]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    contadorl = 0    
-    for c in range(0, 3):
-        if casas[colunas[c][2]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    # Diagonais #
-    contadorl = 0
-    for c in range(0, 3):
-        if casas[colunas[c][c]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-    contadorl = 0
-    for c in range(0, 3):
-        if casas[colunas[0][2]] == letra and casas[colunas[1][1]] == letra and casas[colunas[2][0]] == letra:
-            contadorl += 1
-        if contadorl == 3:
-            mostraTabela(jogador)
-            return True
-                 
-def mostraTabela(jogador, vencedor = True):
-    if vencedor == True:
-        print('-' * 50)
-        print(f'{jogador} ganhou!'.center(50))
-        print('-' * 50)
-        print('\n')
-    for c in range(1, 10):
-        if c == 1 or c == 4 or c == 7:
-            print(f'|{casas[c]}|'.rjust(23), end='')
-        else:
-            print(f'|{casas[c]}|', end='')
-        if c == 3 or c == 6:
-            print(end='\n')
-        if c == 9 and vencedor == True:
-            print('\n')
-            print('-' * 50)
-            print(f'{jogador} ganhou!'.center(50))
-            print('-' * 50)
+
+    if b1['text'] == 'X' and b4['text'] == 'X' and b7['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b1['text'] == 'O' and b4['text'] == 'O' and b7['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b2['text'] == 'X' and b5['text'] == 'X' and b8['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b2['text'] == 'O' and b5['text'] == 'O' and b8['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b3['text'] == 'X' and b6['text'] == 'X' and b9['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b3['text'] == 'O' and b6['text'] == 'O' and b9['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    
+    # Diagonal #
+
+    if b1['text'] == 'X' and b5['text'] == 'X' and b9['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b1['text'] == 'O' and b5['text'] == 'O' and b9['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b3['text'] == 'X' and b5['text'] == 'X' and b7['text'] == 'X' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
+    elif b3['text'] == 'O' and b5['text'] == 'O' and b7['text'] == 'O' and verifica == False:
+        verifica = True
+        aviso['text'] = f'{vencedor} ganhou!'
+        fechar(janela_tabela, 2000)
