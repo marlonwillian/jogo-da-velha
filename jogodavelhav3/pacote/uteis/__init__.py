@@ -8,7 +8,7 @@ def tela_sorteio():
     global janela_sorteio
     janela_sorteio = Tk()
     janela_sorteio.title('Jogo da velha')
-    janela_sorteio.geometry('225x180')
+    janela_sorteio.geometry('225x180+575+230')
 
     texto_orientacao = Label(janela_sorteio, text='Digite os nomes dos jogadores abaixo: ')
     texto_orientacao.grid(column = 0, row = 0)
@@ -57,7 +57,7 @@ def tela_definidor():
     
         janela_definidor = Tk()
         janela_definidor.title('Jogo da velha')
-        janela_definidor.geometry('225x180')
+        janela_definidor.geometry('225x180+575+230')
 
         texto_escolha = Label(janela_definidor, text = f'{sorteado}, você quer jogar com o X ou O? ')
         texto_escolha.grid(column=0, row=1)
@@ -68,11 +68,17 @@ def tela_definidor():
         botao = Button(janela_definidor, text='Pronto', command=lambda: [definidor(), fechar(janela_definidor, 2000)])
         botao.grid(column = 0, row = 3)
 
+        e = Label(janela_definidor, text='')
+        e.grid(column=0, row = 4)
+
+        e1 = Label(janela_definidor, text='')
+        e1.grid(column=0, row = 5)
+
         aviso1 = Label(janela_definidor, text='')
-        aviso1.grid(column=0, row=4)
+        aviso1.grid(column=0, row=6)
 
         aviso2 = Label(janela_definidor, text='')
-        aviso2.grid(column=0, row=5)
+        aviso2.grid(column=0, row=7)
 
         janela_definidor.mainloop()
 
@@ -97,7 +103,7 @@ def tela_tabela():
     
     janela_tabela = Tk()
     janela_tabela.title('Jogo da Velha')
-    janela_tabela.geometry('235x330')
+    janela_tabela.geometry('235x330+575+230')
 
     # frames #
 
@@ -110,9 +116,10 @@ def tela_tabela():
     frame_baixo = Frame(janela_tabela, width=235, height=100, bg=cor_fundo)
     frame_baixo.grid(row=4, column=0)
 
-    global c, contador
+    global c, contador, verifica
     c = 0
     contador = 0
+    verifica = False
 
     while True:
 
@@ -161,8 +168,7 @@ def tela_tabela():
 
 def marcador(nbotao):
     global c, contador, vencedor, verifica
-    verifica = False
-    if c % 2 == 0 and nbotao['text'] == '':
+    if c % 2 == 0 and nbotao['text'] == '' and verifica == False:
         nbotao['text'] = jogador1
         aviso['text'] = f'Vez de {nsorteado} jogar! |{jogador2}|'
         vencedor = sorteado
@@ -171,88 +177,89 @@ def marcador(nbotao):
         if contador == 9:
             aviso['text'] = f'Deu velha!'
             fechar(janela_tabela, 2000)
-    elif c % 2 != 0 and nbotao['text'] == '':
+    elif c % 2 != 0 and nbotao['text'] == '' and verifica == False:
         nbotao['text'] = jogador2
         aviso['text'] = f'Vez de {sorteado} jogar! |{jogador1}|'
         vencedor = nsorteado
         c += 1
         contador += 1
-        if contador == 9:
+        if contador == 9 and verifica == False:
             aviso['text'] = f'Deu velha!'
             fechar(janela_tabela, 2000)
-    elif nbotao['text'] != '': 
+    elif nbotao['text'] != '' and verifica == False: 
             aviso['text'] = 'Marque em lugar vazio!'
 
 def verificaGanhador():
+    global verifica
+
     # Horizontal #
 
     if b1['text'] == 'X' and b2['text'] == 'X' and b3['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
-    elif b1['text'] == 'O' and b2['text'] == 'O' and b3['text'] == 'O' and verifica == False:
         verifica = True
+    elif b1['text'] == 'O' and b2['text'] == 'O' and b3['text'] == 'O' and verifica == False:
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
     elif b4['text'] == 'X' and b5['text'] == 'X' and b6['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b4['text'] == 'O' and b5['text'] == 'O' and b6['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b7['text'] == 'X' and b8['text'] == 'X' and b9['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b7['text'] == 'O' and b8['text'] == 'O' and b9['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
 
     # Vertical #
 
     if b1['text'] == 'X' and b4['text'] == 'X' and b7['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b1['text'] == 'O' and b4['text'] == 'O' and b7['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b2['text'] == 'X' and b5['text'] == 'X' and b8['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b2['text'] == 'O' and b5['text'] == 'O' and b8['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b3['text'] == 'X' and b6['text'] == 'X' and b9['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b3['text'] == 'O' and b6['text'] == 'O' and b9['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     
     # Diagonal #
 
     if b1['text'] == 'X' and b5['text'] == 'X' and b9['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b1['text'] == 'O' and b5['text'] == 'O' and b9['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b3['text'] == 'X' and b5['text'] == 'X' and b7['text'] == 'X' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
     elif b3['text'] == 'O' and b5['text'] == 'O' and b7['text'] == 'O' and verifica == False:
-        verifica = True
         aviso['text'] = f'{vencedor} ganhou!'
         fechar(janela_tabela, 2000)
+        verifica = True
